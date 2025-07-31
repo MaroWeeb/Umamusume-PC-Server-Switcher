@@ -19,6 +19,7 @@ if not exist "!BASE_PATH!" (
 if exist "!UMA_JP!" if exist "!UMA_GLOBAL!" (
     echo Both JP and Global versions detected.
     echo Please choose which version to activate.
+    :choose_version
     set /p version=Type JP or Global: 
 
     if /i "!version!"=="JP" (
@@ -26,8 +27,8 @@ if exist "!UMA_JP!" if exist "!UMA_GLOBAL!" (
     ) else if /i "!version!"=="Global" (
         goto switch_to_global
     ) else (
-        echo Invalid input. Cancelled.
-        goto end
+        echo Invalid input. Please type JP or Global.
+        goto choose_version
     )
 )
 
@@ -36,13 +37,13 @@ if not exist "!UMA_FOLDER!" (
     if exist "!UMA_JP!" (
         echo No active version. Restoring JP...
         rename "!UMA_JP!" umamusume
-        echo ✅ JP version is now active.
+        echo ✅ JP version is now active !
         goto end
     )
     if exist "!UMA_GLOBAL!" (
         echo No active version. Restoring Global...
         rename "!UMA_GLOBAL!" umamusume
-        echo ✅ Global version is now active.
+        echo ✅ Global version is now active !
         goto end
     )
 )
@@ -60,10 +61,17 @@ if exist "!UMA_GLOBAL!" (
     echo Detected active version: JP
 )
 
+
 set /p confirm=Do you want to switch? (Y/N): 
-if /i not "!confirm!"=="Y" (
+:confirm_switch
+if /i "!confirm!"=="Y" (
+    REM continue script
+) else if /i "!confirm!"=="N" (
     echo Cancelled.
     goto end
+) else (
+    echo Invalid input... Please type Y or N.
+    goto confirm_switch
 )
 
 REM Case 1: Main folder exists
